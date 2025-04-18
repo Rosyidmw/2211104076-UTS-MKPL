@@ -13,32 +13,46 @@ public class TaxFunction {
 	 * Jika pegawai sudah memiliki anak maka penghasilan tidak kena pajaknya ditambah sebesar Rp 4.500.000 per anak sampai anak ketiga.
 	 * 
 	 */
-	
-	
-	public static int calculateTax(int monthlySalary, int otherMonthlyIncome, int numberOfMonthWorking, int deductible, boolean isMarried, int numberOfChildren) {
-		
+
+
+	public static int calculateTax(TaxCalculationData data) {
 		int tax = 0;
-		
-		if (numberOfMonthWorking > 12) {
+
+		if (data.numberOfMonthWorking > 12) {
 			System.err.println("More than 12 month working per year");
 		}
-		
-		if (numberOfChildren > 3) {
-			numberOfChildren = 3;
+
+		if (data.numberOfChildren > 3) {
+			data.numberOfChildren = 3;
 		}
-		
-		if (isMarried) {
-			tax = (int) Math.round(0.05 * (((monthlySalary + otherMonthlyIncome) * numberOfMonthWorking) - deductible - (54000000 + 4500000 + (numberOfChildren * 1500000))));
-		}else {
-			tax = (int) Math.round(0.05 * (((monthlySalary + otherMonthlyIncome) * numberOfMonthWorking) - deductible - 54000000));
+
+		int nonTaxableIncome = 54000000;
+		if (data.isMarried) {
+			nonTaxableIncome += 4500000 + (data.numberOfChildren * 1500000);
 		}
-		
-		if (tax < 0) {
-			return 0;
-		}else {
-			return tax;
-		}
-			 
+
+		tax = (int) Math.round(0.05 * (((data.monthlySalary + data.otherMonthlyIncome) * data.numberOfMonthWorking) - data.deductible - nonTaxableIncome));
+
+		return Math.max(tax, 0);
 	}
-	
+
+
+}
+
+public class TaxCalculationData {
+	public int monthlySalary;
+	public int otherMonthlyIncome;
+	public int numberOfMonthWorking;
+	public int deductible;
+	public boolean isMarried;
+	public int numberOfChildren;
+
+	public TaxCalculationData(int monthlySalary, int otherMonthlyIncome, int numberOfMonthWorking, int deductible, boolean isMarried, int numberOfChildren) {
+		this.monthlySalary = monthlySalary;
+		this.otherMonthlyIncome = otherMonthlyIncome;
+		this.numberOfMonthWorking = numberOfMonthWorking;
+		this.deductible = deductible;
+		this.isMarried = isMarried;
+		this.numberOfChildren = numberOfChildren;
+	}
 }
